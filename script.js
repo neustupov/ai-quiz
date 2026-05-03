@@ -63,14 +63,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Рендер вопроса
     function renderQuestion() {
-        if (!state.quizQuestions[state.currentIndex]) {
+        const q = state.quizQuestions[state.currentIndex];
+
+        // 🔒 Защитная проверка: если вопроса нет — завершаем квиз без ошибки
+        if (!q) {
+            console.warn('Вопросы закончились, переходим к результатам.');
             finishQuiz();
             return;
         }
+
         state.answered = false;
-        const q = state.quizQuestions[state.currentIndex];
-        progressText.textContent = `Вопрос ${state.currentIndex + 1} из 10`;
-        progressBar.style.width = `${((state.currentIndex + 1) / 10) * 100}%`;
+        const total = state.quizQuestions.length;
+        progressText.textContent = `Вопрос ${state.currentIndex + 1} из ${total}`;
+        progressBar.style.width = `${((state.currentIndex + 1) / total) * 100}%`;
         scoreText.textContent = `Очки: ${state.score}`;
 
         qImage.src = q.image || '';
