@@ -144,13 +144,36 @@ document.addEventListener('DOMContentLoaded', () => {
         loadLeaderboard();
     }
 
-    // Заглушка таблицы (до подключения Google Sheets)
-    function loadLeaderboardMock() {
-        const mockData = [
-            { name: "Алексей", score: 8, date: "04.05.2026" },
-            { name: "Мария", score: 6, date: "03.05.2026" }
-        ];
-        renderTable(mockData);
+    // Сохранение результата
+    async function saveResult(name, score, total) {
+        try {
+            await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, score, total })
+            });
+        } catch (err) {
+            console.warn('Не удалось сохранить результат (проверь консоль)');
+        }
+    }
+
+    // Загрузка лидерборда
+    async function loadLeaderboard() {
+        leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-500">Загрузка результатов...</td></tr>`;
+
+        try {
+            const res = await fetch(APPS_SCRIPT_URL);
+            const json = await res.json();
+
+            if (json.success && json.data.length > 0) {
+                renderTable(json.data);
+            } else {
+                leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-500">Пока нет результатов</td></tr>`;
+            }
+        } catch (err) {
+            console.error('Ошибка загрузки таблицы:', err);
+            leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-red-400">Не удалось загрузить таблицу</td></tr>`;
+        }
     }
 
     function renderTable(data) {
