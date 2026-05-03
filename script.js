@@ -63,6 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Рендер вопроса
     function renderQuestion() {
+        if (!state.quizQuestions[state.currentIndex]) {
+            finishQuiz();
+            return;
+        }
         state.answered = false;
         const q = state.quizQuestions[state.currentIndex];
         progressText.textContent = `Вопрос ${state.currentIndex + 1} из 10`;
