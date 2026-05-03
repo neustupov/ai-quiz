@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const leaderboardBody = document.getElementById('leaderboard-body');
     const restartBtn = document.getElementById('restart-btn');
 
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/1b4ZVrlEYQ6sGRIAJ57eT5-hv0HSBvmYqiZe8bKZOKck/exec';
+
     // Переключение экранов
     function showScreen(name) {
         Object.values(screens).forEach(el => el.classList.add('hidden'));
@@ -123,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Завершение квиза
-    async function finishQuiz() {
+    function finishQuiz() {
         showScreen('results');
         resultName.textContent = state.name;
         resultScore.textContent = `${state.score}/10`;
@@ -135,10 +137,11 @@ document.addEventListener('DOMContentLoaded', () => {
             "Хороший уровень 🧠",
             "Эксперт по ИИ! 🚀"
         ];
-        resultMessage.textContent = messages[Math.min(state.score, 4)];
+        resultMessage.textContent = messages[Math.min(Math.floor(state.score / 2.5), 4)];
 
-        // Здесь будет вызов saveResult() и loadLeaderboard()
-        loadLeaderboardMock(); // Заглушка до этапа 4
+        // Сохраняем и загружаем таблицу
+        saveResult(state.name, state.score, 10);
+        loadLeaderboard();
     }
 
     // Заглушка таблицы (до подключения Google Sheets)
