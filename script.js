@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const leaderboardBody = document.getElementById('leaderboard-body');
     const restartBtn = document.getElementById('restart-btn');
 
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/1b4ZVrlEYQ6sGRIAJ57eT5-hv0HSBvmYqiZe8bKZOKck/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyzeYgYKJrhcyUI71MCcifTM1UDxi8JRgIDu1u1xBAaiViJ3ntnzmpHFIlH8wQpYbukvA/exec';
 
     // Переключение экранов
     function showScreen(name) {
