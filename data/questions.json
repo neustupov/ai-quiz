@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "question": "Что такое Large Language Model (LLM)?",
+    "image": "",
+    "options": ["Нейросеть, обученная на огромных текстах для генерации и понимания языка", "База данных с готовыми ответами", "Язык программирования для ИИ"],
+    "correctIndex": 0
+  },
+  {
+    "id": 2,
+    "question": "Какой метод чаще всего используется для обучения современных ИИ-моделей?",
+    "image": "",
+    "options": ["Генетические алгоритмы", "Обучение на размеченных данных и самообучение", "Ручное программирование правил"],
+    "correctIndex": 1
+  },
+  {
+    "id": 3,
+    "question": "Что означает аббревиатура GPT?",
+    "image": "",
+    "options": ["General Processing Technology", "Generative Pre-trained Transformer", "Global Prompt Translator"],
+    "correctIndex": 1
+  }
+]
