@@ -147,13 +147,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Сохранение результата
     async function saveResult(name, score, total) {
         try {
+            // 🔥 Важно: no-cors mode + text/plain чтобы избежать preflight
             await fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                // Не указываем Content-Type: application/json — браузер поставит text/plain автоматически
                 body: JSON.stringify({ name, score, total })
+                // mode: 'no-cors' НЕ используем — иначе не прочитаем ответ
             });
+            // Ответ от Apps Script при no-preflight приходит без CORS-заголовков,
+            // но данные всё равно записываются. Для чтения ответа нужна дополнительная обработка,
+            // но для нашей задачи достаточно факта отправки.
         } catch (err) {
-            console.warn('Не удалось сохранить результат (проверь консоль)');
+            console.warn('Не удалось сохранить результат:', err);
         }
     }
 
