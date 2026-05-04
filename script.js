@@ -170,43 +170,39 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const url = new URL(APPS_SCRIPT_URL);
             url.searchParams.set('action', 'save');
-            url.searchParams.set('name', name?.toString().slice(0, 30) || 'Аноним');
+            url.searchParams.set('name', name);
             url.searchParams.set('score', score);
             url.searchParams.set('total', total);
 
-            console.log('📤 Отправка на:', url.toString());
+            // Добавляем timestamp чтобы браузер не кэшировал запрос
+            url.searchParams.set('t', Date.now());
 
-            const res = await fetch(url.toString(), { method: 'GET' });
-            const text = await res.text(); // Читаем как текст, чтобы не падать на HTML-ошибках
-
-            let data;
-            try { data = JSON.parse(text); } catch { data = { success: false, error: 'Не JSON ответ: ' + text.slice(0,100) }; }
-
-            if (data.success) {
-                console.log('✅ Результат сохранён');
-            } else {
-                console.error('❌ Ошибка сервера:', data.error);
-            }
+            const res = await fetch(url.toString(), {method: 'GET'});
+            const json = await res.json();
+            console.log('💾 Save response:', json);
         } catch (err) {
-            console.error('❌ Ошибка сети или CORS:', err);
+            console.error('❌ Save failed:', err);
         }
     }
 
     async function loadLeaderboard() {
-        leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-500">Загрузка результатов...</td></tr>`;
+        leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-500">Загрузка...</td></tr>`;
         try {
             const url = new URL(APPS_SCRIPT_URL);
             url.searchParams.set('action', 'load');
+            url.searchParams.set('t', Date.now());
+
             const res = await fetch(url.toString());
             const json = await res.json();
+
             if (json.success && json.data?.length > 0) {
                 renderTable(json.data);
             } else {
-                leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-500">Пока нет результатов</td></tr>`;
+                leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-500">Нет результатов</td></tr>`;
             }
         } catch (err) {
-            console.error('❌ Ошибка таблицы:', err);
-            leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-red-400">Не удалось загрузить</td></tr>`;
+            console.error('❌ Load failed:', err);
+            leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-red-400">Ошибка загрузки</td></tr>`;
         }
     }
 
