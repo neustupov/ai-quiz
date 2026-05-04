@@ -13,11 +13,15 @@ function doGet(e) {
       const name = String(params.name || 'Аноним').slice(0, 30);
       const score = parseInt(params.score) || 0;
       const total = parseInt(params.total) || 10;
-      const sid = params.sid || ''; // 🔑 Новый параметр
+      const sid = params.sid || '';
       const now = new Date();
       const dateStr = Utilities.formatDate(now, Session.getScriptTimeZone(), 'dd.MM.yyyy HH:mm');
 
       sheet.appendRow([now, name, score, total, dateStr, sid]);
+
+      // 🔥 КРИТИЧНО: принудительно сбрасывает буфер в таблицу, чтобы следующий read увидел строку
+      SpreadsheetApp.flush();
+
       Logger.log(`✅ Saved: ${name} | ${score}/${total} | SID: ${sid}`);
       return jsonResponse({ success: true, message: 'Saved' });
     } catch (err) {
@@ -27,9 +31,13 @@ function doGet(e) {
 
   // 📤 ЗАГРУЗКА ТАБЛИЦЫ
   try {
-    const data = sheet.getDataRange().getValues();
-    const rows = data.slice(1);
-    rows.sort((a, b) => b[2] - a[2]);
+    // Явно читаем диапазон, чтобы избежать проблем с кэшем
+    const lastRow = sheet.getLastRow();
+    const lastCol = 6; // A=Timestamp, B=Name, C=Score, D=Total, E=Date, F=SID
+    const data = lastRow > 1 ? sheet.getRange(1, 1, lastRow, lastCol).getValues() : [];
+    const rows = data.slice(1); // убираем заголовок
+
+    rows.sort((a, b) => b[2] - a[2]); // сортировка по очкам
 
     const leaderboard = rows.slice(0, 50).map((row, i) => {
       let dateStr = '-';
@@ -43,7 +51,7 @@ function doGet(e) {
         score: row[2],
         total: row[3],
         date: dateStr,
-        sid: row[5] || '' // 🔑 Возвращаем ID сессии
+        sid: row[5] || '' // 🔑 ID сессии для подсветки
       };
     });
 
