@@ -190,13 +190,14 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const url = new URL(APPS_SCRIPT_URL);
             url.searchParams.set('action', 'load');
-            url.searchParams.set('t', Date.now());
+            url.searchParams.set('t', Date.now()); // сброс кэша
 
             const res = await fetch(url.toString());
             const json = await res.json();
 
-            if (json.success && json.data?.length > 0) {
-                renderTable(json.data);
+            // 🔥 ИСПРАВЛЕНИЕ: читаем json.leaderboard вместо json.data
+            if (json.success && json.leaderboard?.length > 0) {
+                renderTable(json.leaderboard);
             } else {
                 leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-500">Нет результатов</td></tr>`;
             }
