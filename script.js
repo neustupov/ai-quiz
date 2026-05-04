@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywFZAlQzqrvjKHbhRVVGsYbHjG223rheB4dkOruu6l8SW2DUHgOhzCDdDJNGYSc3PTCg/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdsw6qAZqgOvlrN0FCskM1KCYbMosteHTRAgQWNhNZjrKTzcVdMeq_uFsMYTAcoM1vAg/exec';
+
+    // 🔑 Уникальный ID текущей сессии
+    const SESSION_ID = localStorage.getItem('quiz_session_id') || (crypto?.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15));
+    localStorage.setItem('quiz_session_id', SESSION_ID);
 
     const DIFFICULTY = {
         easy:   { label: 'Лёгкий',   color: 'emerald', points: 1 },
@@ -173,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
             url.searchParams.set('name', name);
             url.searchParams.set('score', score);
             url.searchParams.set('total', total);
+            url.searchParams.set('sid', SESSION_ID);
 
             // Добавляем timestamp чтобы браузер не кэшировал запрос
             url.searchParams.set('t', Date.now());
@@ -208,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderTable(data, currentName) {
+    function renderTable(data) {
         leaderboardBody.innerHTML = '';
         if (!data?.length) {
             leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-500">Нет результатов</td></tr>`;
@@ -216,8 +221,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         data.forEach((row) => {
-            // 🔍 Сравнение без учёта регистра и лишних пробелов
-            const isCurrentUser = row.name?.toString().toLowerCase().trim() === currentName?.toString().toLowerCase().trim();
+            // 🔍 Сравниваем по уникальному ID сессии, а не по имени
+            const isCurrentUser = row.sid === SESSION_ID;
 
             const tr = document.createElement('tr');
             tr.className = `border-b transition-colors ${
@@ -241,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 📜 Прокрутка до текущей строки, если она ниже видимой области
             if (isCurrentUser) {
-                setTimeout(() => tr.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+                setTimeout(() => tr.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 150);
             }
         });
     }
