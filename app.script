@@ -1,0 +1,52 @@
+function doGet(e) {
+  const params = (e && e.parameter) ? e.parameter : {};
+  const action = String(params.action || '').trim().toLowerCase();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Results');
+
+  if (!sheet) {
+    return jsonResponse({ success: false, error: 'Лист "Results" не найден. Создайте его с точным названием.' });
+  }
+
+  if (action === 'save') {
+    try {
+      const name = String(params.name || 'Аноним').slice(0, 30);
+      const score = parseInt(params.score) || 0;
+      const total = parseInt(params.total) || 10;
+      const now = new Date();
+      const dateStr = Utilities.formatDate(now, Session.getScriptTimeZone(), 'dd.MM.yyyy HH:mm');
+
+      sheet.appendRow([now, name, score, total, dateStr]);
+      Logger.log(`✅ Saved: ${name} | ${score}/${total}`);
+      return jsonResponse({ success: true, message: 'Saved' });
+    } catch (err) {
+      Logger.log(`❌ Save Error: ${err}`);
+      return jsonResponse({ success: false, error: err.message });
+    }
+  }
+
+  // Загрузка таблицы (по умолчанию)
+  try {
+    const data = sheet.getDataRange().getValues();
+    const rows = data.slice(1);
+    rows.sort((a, b) => b[2] - a[2]);
+
+    const leaderboard = rows.slice(0, 50).map((row, i) => {
+      let dateStr = '-';
+      if (row[4]) {
+        const d = new Date(row[4]);
+        dateStr = !isNaN(d.getTime()) ? Utilities.formatDate(d, Session.getScriptTimeZone(), 'dd.MM.yyyy') : String(row[4]).slice(0, 10);
+      }
+      return { rank: i + 1, name: row[1] || 'Аноним', score: row[2], total: row[3], date: dateStr };
+    });
+
+    return jsonResponse({ success: true,  leaderboard });
+  } catch (err) {
+    return jsonResponse({ success: false, error: err.message });
+  }
+}
+
+function doPost(e) { return doGet(e); }
+
+function jsonResponse(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}

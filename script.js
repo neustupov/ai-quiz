@@ -197,7 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 🔥 ИСПРАВЛЕНИЕ: читаем json.leaderboard вместо json.data
             if (json.success && json.leaderboard?.length > 0) {
-                renderTable(json.leaderboard);
+                // 🔥 Передаём имя текущего игрока для подсветки
+                renderTable(json.leaderboard, state.name);
             } else {
                 leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-500">Нет результатов</td></tr>`;
             }
@@ -207,18 +208,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderTable(data) {
+    function renderTable(data, currentName) {
         leaderboardBody.innerHTML = '';
-        data.forEach((row, i) => {
+        if (!data?.length) {
+            leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-500">Нет результатов</td></tr>`;
+            return;
+        }
+
+        data.forEach((row) => {
+            // 🔍 Сравнение без учёта регистра и лишних пробелов
+            const isCurrentUser = row.name?.toString().toLowerCase().trim() === currentName?.toString().toLowerCase().trim();
+
             const tr = document.createElement('tr');
-            tr.className = 'border-b border-gray-800 hover:bg-gray-800/30';
+            tr.className = `border-b transition-colors ${
+                isCurrentUser
+                    ? 'border-cyan-500/60 bg-cyan-900/30'
+                    : 'border-gray-800 hover:bg-gray-800/30'
+            }`;
+
+            const displayName = isCurrentUser
+                ? `${row.name} <span class="inline-block ml-2 text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Вы</span>`
+                : row.name;
+
             tr.innerHTML = `
-        <td class="py-3 pl-2 text-gray-500">${i + 1}</td>
-        <td class="py-3 font-medium">${row.name}</td>
-        <td class="py-3 text-right pr-2 font-bold text-cyan-400">${row.score}/${row.total}</td>
+        <td class="py-3 pl-2 ${isCurrentUser ? 'text-cyan-400 font-bold' : 'text-gray-500'}">${row.rank}</td>
+        <td class="py-3 font-medium">${displayName}</td>
+        <td class="py-3 text-right pr-2 ${isCurrentUser ? 'text-cyan-300 font-bold' : 'font-bold text-cyan-400'}">${row.score}/${row.total}</td>
         <td class="py-3 text-right pr-2 text-gray-400">${row.date}</td>
       `;
+
             leaderboardBody.appendChild(tr);
+
+            // 📜 Прокрутка до текущей строки, если она ниже видимой области
+            if (isCurrentUser) {
+                setTimeout(() => tr.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+            }
         });
     }
 
