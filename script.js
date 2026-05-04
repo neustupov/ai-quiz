@@ -173,10 +173,22 @@ document.addEventListener('DOMContentLoaded', () => {
             url.searchParams.set('name', name?.toString().slice(0, 30) || 'Аноним');
             url.searchParams.set('score', score);
             url.searchParams.set('total', total);
-            await fetch(url.toString(), { method: 'GET', keepalive: true });
-            console.log('✅ Результат сохранён');
+
+            console.log('📤 Отправка на:', url.toString());
+
+            const res = await fetch(url.toString(), { method: 'GET' });
+            const text = await res.text(); // Читаем как текст, чтобы не падать на HTML-ошибках
+
+            let data;
+            try { data = JSON.parse(text); } catch { data = { success: false, error: 'Не JSON ответ: ' + text.slice(0,100) }; }
+
+            if (data.success) {
+                console.log('✅ Результат сохранён');
+            } else {
+                console.error('❌ Ошибка сервера:', data.error);
+            }
         } catch (err) {
-            console.warn('⚠️ Ошибка сохранения:', err);
+            console.error('❌ Ошибка сети или CORS:', err);
         }
     }
 
