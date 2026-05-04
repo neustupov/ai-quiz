@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyzeYgYKJrhcyUI71MCcifTM1UDxi8JRgIDu1u1xBAaiViJ3ntnzmpHFIlH8wQpYbukvA/exec';
+
     const DIFFICULTY = {
-        easy: { label: 'Лёгкий', color: 'emerald', points: 1 },
-        medium: { label: 'Средний', color: 'amber', points: 2 },
-        hard: { label: 'Сложный', color: 'rose', points: 3 }
+        easy:   { label: 'Лёгкий',   color: 'emerald', points: 1 },
+        medium: { label: 'Средний',  color: 'amber',   points: 2 },
+        hard:   { label: 'Сложный',  color: 'rose',    points: 3 }
     };
 
-    // Состояние
     const state = {
         name: '',
         questions: [],
@@ -16,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
         answered: false
     };
 
-    // DOM элементы
     const screens = {
         start: document.getElementById('screen-start'),
         quiz: document.getElementById('screen-quiz'),
@@ -37,30 +37,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const leaderboardBody = document.getElementById('leaderboard-body');
     const restartBtn = document.getElementById('restart-btn');
 
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyzeYgYKJrhcyUI71MCcifTM1UDxi8JRgIDu1u1xBAaiViJ3ntnzmpHFIlH8wQpYbukvA/exec';
-
-    // Переключение экранов
     function showScreen(name) {
         Object.values(screens).forEach(el => el.classList.add('hidden'));
         screens[name].classList.remove('hidden');
         screens[name].classList.add('fade-in');
     }
 
-    // Загрузка вопросов
     async function loadQuestions() {
         try {
             const res = await fetch('./data/questions.json');
-            if (!res.ok) throw new Error('Не удалось загрузить вопросы');
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
             state.questions = await res.json();
+            console.log(`✅ Загружено ${state.questions.length} вопросов`);
             return true;
         } catch (err) {
-            console.error(err);
-            alert('Ошибка загрузки вопросов. Проверьте файл data/questions.json');
+            console.error('❌ Ошибка загрузки JSON:', err);
+            startError.textContent = 'Не удалось загрузить вопросы. Проверьте файл data/questions.json';
+            startError.classList.remove('hidden');
             return false;
         }
     }
 
-    // Рандомизация (Fisher-Yates)
     function shuffleArray(arr) {
         const a = [...arr];
         for (let i = a.length - 1; i > 0; i--) {
@@ -70,13 +67,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return a;
     }
 
-    // Рендер вопроса
+    function selectQuestionsByDifficulty(allQuestions) {
+        const byDiff = { easy: [], medium: [], hard: [] };
+        allQuestions.forEach(q => {
+            if (byDiff[q.difficulty]) byDiff[q.difficulty].push(q);
+        });
+        // Берём по 2 из каждой категории (можно изменить на .slice(0, 3) для 3/3/3)
+        const pickTwo = (arr) => shuffleArray(arr).slice(0, 2);
+        return [...pickTwo(byDiff.easy), ...pickTwo(byDiff.medium), ...pickTwo(byDiff.hard)];
+    }
+
     function renderQuestion() {
         const q = state.quizQuestions[state.currentIndex];
-
-        // 🔒 Защитная проверка: если вопроса нет — завершаем квиз без ошибки
         if (!q) {
-            console.warn('Вопросы закончились, переходим к результатам.');
+            console.warn('⚠️ Вопросы закончились раньше времени.');
             finishQuiz();
             return;
         }
@@ -89,15 +93,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         qImage.src = q.image || '';
         qImage.classList.toggle('hidden', !q.image);
-        // 🎯 Бейдж сложности
-        const diff = DIFFICULTY[q.difficulty] || DIFFICULTY.easy;
-        const badge = document.createElement('div');
-        badge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border diff-${diff.color} mb-4`;
-        badge.textContent = `${diff.label} • +${diff.points} балл${diff.points > 1 ? 'а' : ''}`;
-
-        // Очищаем и добавляем бейдж перед вопросом
-        qText.parentElement.insertBefore(badge, qText);
         qText.textContent = q.question;
+
+        // 🏷️ Бейдж сложности
+        const diff = DIFFICULTY[q.difficulty] || DIFFICULTY.easy;
+        const container = qText.parentElement;
+        const oldBadge = container.querySelector('.diff-badge');
+        if (oldBadge) oldBadge.remove();
+
+        const badge = document.createElement('div');
+        badge.className = `diff-badge inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border diff-${diff.color} mb-4 badge-enter`;
+        badge.textContent = `${diff.label} • +${diff.points} балл${diff.points > 1 ? 'а' : ''}`;
+        container.insertBefore(badge, qText);
 
         qOptions.innerHTML = '';
         q.options.forEach((opt, idx) => {
@@ -109,11 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Обработка ответа
     function handleAnswer(selected, correct, btn) {
-        const q = state.quizQuestions[state.currentIndex];
         if (state.answered) return;
         state.answered = true;
+
+        const q = state.quizQuestions[state.currentIndex];
+        const diff = DIFFICULTY[q.difficulty] || DIFFICULTY.easy;
 
         const buttons = qOptions.querySelectorAll('button');
         buttons.forEach(b => {
@@ -123,9 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (selected === correct) {
             btn.classList.add('bg-emerald-600/20', 'border-emerald-500', 'text-emerald-300');
-            const diff = DIFFICULTY[q.difficulty] || DIFFICULTY.easy;
             state.score += diff.points;
-            scoreText.textContent = `Очки: ${state.score}`;
             scoreText.textContent = `Очки: ${state.score}`;
         } else {
             btn.classList.add('bg-red-600/20', 'border-red-500', 'text-red-300');
@@ -134,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             state.currentIndex++;
-            if (state.currentIndex < 10) {
+            if (state.currentIndex < state.quizQuestions.length) {
                 renderQuestion();
             } else {
                 finishQuiz();
@@ -142,7 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1200);
     }
 
-    // Завершение квиза
     function finishQuiz() {
         showScreen('results');
         resultName.textContent = state.name;
@@ -157,68 +162,58 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
         resultMessage.textContent = messages[Math.min(Math.floor(state.score / 3), 4)];
 
-        // Сохраняем и загружаем таблицу
-        saveResult(state.name, state.score, 10);
+        saveResult(state.name, state.score, 12);
         loadLeaderboard();
     }
 
-    // Сохранение результата
     async function saveResult(name, score, total) {
         try {
-            // 🔥 Важно: no-cors mode + text/plain чтобы избежать preflight
-            await fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                // Не указываем Content-Type: application/json — браузер поставит text/plain автоматически
-                body: JSON.stringify({ name, score, total })
-                // mode: 'no-cors' НЕ используем — иначе не прочитаем ответ
-            });
-            // Ответ от Apps Script при no-preflight приходит без CORS-заголовков,
-            // но данные всё равно записываются. Для чтения ответа нужна дополнительная обработка,
-            // но для нашей задачи достаточно факта отправки.
+            const url = new URL(APPS_SCRIPT_URL);
+            url.searchParams.set('action', 'save');
+            url.searchParams.set('name', name?.toString().slice(0, 30) || 'Аноним');
+            url.searchParams.set('score', score);
+            url.searchParams.set('total', total);
+            await fetch(url.toString(), { method: 'GET', keepalive: true });
+            console.log('✅ Результат сохранён');
         } catch (err) {
-            console.warn('Не удалось сохранить результат:', err);
+            console.warn('⚠️ Ошибка сохранения:', err);
         }
     }
 
-    // Загрузка лидерборда
     async function loadLeaderboard() {
         leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-500">Загрузка результатов...</td></tr>`;
-
         try {
-            const res = await fetch(APPS_SCRIPT_URL);
+            const url = new URL(APPS_SCRIPT_URL);
+            url.searchParams.set('action', 'load');
+            const res = await fetch(url.toString());
             const json = await res.json();
-
-            if (json.success && json.data.length > 0) {
+            if (json.success && json.data?.length > 0) {
                 renderTable(json.data);
             } else {
                 leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-500">Пока нет результатов</td></tr>`;
             }
         } catch (err) {
-            console.error('Ошибка загрузки таблицы:', err);
-            leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-red-400">Не удалось загрузить таблицу</td></tr>`;
+            console.error('❌ Ошибка таблицы:', err);
+            leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-red-400">Не удалось загрузить</td></tr>`;
         }
     }
 
     function renderTable(data) {
         leaderboardBody.innerHTML = '';
-        if (!data.length) {
-            leaderboardBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-500">Пока нет результатов</td></tr>`;
-            return;
-        }
         data.forEach((row, i) => {
             const tr = document.createElement('tr');
             tr.className = 'border-b border-gray-800 hover:bg-gray-800/30';
             tr.innerHTML = `
         <td class="py-3 pl-2 text-gray-500">${i + 1}</td>
         <td class="py-3 font-medium">${row.name}</td>
-        <td class="py-3 text-right pr-2 font-bold text-cyan-400">${row.score}/10</td>
+        <td class="py-3 text-right pr-2 font-bold text-cyan-400">${row.score}/${row.total}</td>
         <td class="py-3 text-right pr-2 text-gray-400">${row.date}</td>
       `;
             leaderboardBody.appendChild(tr);
         });
     }
 
-    // Инициализация
+    // 🔘 Кнопка старта
     startBtn.onclick = async () => {
         const name = nameInput.value.trim();
         if (!name) {
@@ -227,38 +222,36 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         startError.classList.add('hidden');
-        state.name = name;
+        startBtn.disabled = true;
+        startBtn.textContent = 'Загрузка...';
 
         const loaded = await loadQuestions();
-        if (!loaded) return;
+        if (!loaded) {
+            startBtn.disabled = false;
+            startBtn.textContent = 'Начать квиз';
+            return;
+        }
 
+        state.name = name;
         state.quizQuestions = selectQuestionsByDifficulty(state.questions);
+
+        if (state.quizQuestions.length < 6) {
+            startError.textContent = 'Недостаточно вопросов в JSON (нужно мин. 2 на категорию)';
+            startError.classList.remove('hidden');
+            startBtn.disabled = false;
+            startBtn.textContent = 'Начать квиз';
+            return;
+        }
+
         state.currentIndex = 0;
         state.score = 0;
         showScreen('quiz');
         renderQuestion();
+        startBtn.textContent = 'Начать квиз';
     };
 
     restartBtn.onclick = () => {
         showScreen('start');
         nameInput.value = '';
     };
-
-    function selectQuestionsByDifficulty(allQuestions) {
-        const byDiff = { easy: [], medium: [], hard: [] };
-
-        // Группируем
-        allQuestions.forEach(q => {
-            if (byDiff[q.difficulty]) byDiff[q.difficulty].push(q);
-        });
-
-        // Перемешиваем и берём по 2 из каждой
-        const pickTwo = (arr) => shuffleArray(arr).slice(0, 2);
-
-        return [
-            ...pickTwo(byDiff.easy),
-            ...pickTwo(byDiff.medium),
-            ...pickTwo(byDiff.hard)
-        ];
-    }
 });

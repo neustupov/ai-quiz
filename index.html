@@ -15,7 +15,7 @@
         .progress-fill { transition: width 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 🎯 Цвета бейджей сложности */
+        /* 🎯 Бейджи сложности */
         .diff-emerald { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
         .diff-amber   { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.3); }
         .diff-rose    { background: rgba(244, 63, 94, 0.15);  color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.3); }
@@ -25,7 +25,6 @@
 </head>
 <body class="bg-gray-950 text-white min-h-screen flex items-center justify-center p-4">
 
-<!-- ФОНОВЫЕ ЭФФЕКТЫ -->
 <div class="fixed inset-0 -z-10 overflow-hidden">
     <div class="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl"></div>
     <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
@@ -50,7 +49,7 @@
 <section id="screen-quiz" class="w-full max-w-lg hidden fade-in">
     <div class="glass rounded-2xl p-6 shadow-2xl">
         <div class="flex justify-between items-center mb-4 text-sm text-gray-400">
-            <span id="quiz-progress-text">Вопрос 1 из 10</span>
+            <span id="quiz-progress-text">Вопрос 1 из 6</span>
             <span id="quiz-score">Очки: 0</span>
         </div>
         <div class="w-full bg-gray-800 rounded-full h-2 mb-6">
@@ -71,7 +70,7 @@
         <div class="text-center mb-8">
             <h2 class="text-3xl font-bold mb-2">Результат</h2>
             <p class="text-gray-400" id="result-name"></p>
-            <div class="text-6xl font-bold mt-4 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent" id="result-score">0/10</div>
+            <div class="text-6xl font-bold mt-4 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent" id="result-score">0/12</div>
             <p class="text-gray-300 mt-2" id="result-message"></p>
         </div>
 
