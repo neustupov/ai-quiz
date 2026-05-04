@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    const DIFFICULTY = {
+        easy: { label: 'Лёгкий', color: 'emerald', points: 1 },
+        medium: { label: 'Средний', color: 'amber', points: 2 },
+        hard: { label: 'Сложный', color: 'rose', points: 3 }
+    };
+
     // Состояние
     const state = {
         name: '',
@@ -82,6 +89,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         qImage.src = q.image || '';
         qImage.classList.toggle('hidden', !q.image);
+        // 🎯 Бейдж сложности
+        const diff = DIFFICULTY[q.difficulty] || DIFFICULTY.easy;
+        const badge = document.createElement('div');
+        badge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border diff-${diff.color} mb-4`;
+        badge.textContent = `${diff.label} • +${diff.points} балл${diff.points > 1 ? 'а' : ''}`;
+
+        // Очищаем и добавляем бейдж перед вопросом
+        qText.parentElement.insertBefore(badge, qText);
         qText.textContent = q.question;
 
         qOptions.innerHTML = '';
@@ -96,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Обработка ответа
     function handleAnswer(selected, correct, btn) {
+        const q = state.quizQuestions[state.currentIndex];
         if (state.answered) return;
         state.answered = true;
 
@@ -107,7 +123,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (selected === correct) {
             btn.classList.add('bg-emerald-600/20', 'border-emerald-500', 'text-emerald-300');
-            state.score++;
+            const diff = DIFFICULTY[q.difficulty] || DIFFICULTY.easy;
+            state.score += diff.points;
+            scoreText.textContent = `Очки: ${state.score}`;
             scoreText.textContent = `Очки: ${state.score}`;
         } else {
             btn.classList.add('bg-red-600/20', 'border-red-500', 'text-red-300');
@@ -128,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function finishQuiz() {
         showScreen('results');
         resultName.textContent = state.name;
-        resultScore.textContent = `${state.score}/10`;
+        resultScore.textContent = `${state.score}/12`;
 
         const messages = [
             "ИИ для тебя пока магия 🔮",
@@ -137,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "Хороший уровень 🧠",
             "Эксперт по ИИ! 🚀"
         ];
-        resultMessage.textContent = messages[Math.min(Math.floor(state.score / 2.5), 4)];
+        resultMessage.textContent = messages[Math.min(Math.floor(state.score / 3), 4)];
 
         // Сохраняем и загружаем таблицу
         saveResult(state.name, state.score, 10);
@@ -214,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const loaded = await loadQuestions();
         if (!loaded) return;
 
-        state.quizQuestions = shuffleArray(state.questions).slice(0, 10);
+        state.quizQuestions = selectQuestionsByDifficulty(state.questions);
         state.currentIndex = 0;
         state.score = 0;
         showScreen('quiz');
@@ -225,4 +243,22 @@ document.addEventListener('DOMContentLoaded', () => {
         showScreen('start');
         nameInput.value = '';
     };
+
+    function selectQuestionsByDifficulty(allQuestions) {
+        const byDiff = { easy: [], medium: [], hard: [] };
+
+        // Группируем
+        allQuestions.forEach(q => {
+            if (byDiff[q.difficulty]) byDiff[q.difficulty].push(q);
+        });
+
+        // Перемешиваем и берём по 2 из каждой
+        const pickTwo = (arr) => shuffleArray(arr).slice(0, 2);
+
+        return [
+            ...pickTwo(byDiff.easy),
+            ...pickTwo(byDiff.medium),
+            ...pickTwo(byDiff.hard)
+        ];
+    }
 });

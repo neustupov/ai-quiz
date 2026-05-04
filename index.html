@@ -12,8 +12,15 @@
         .btn-hover { transition: all 0.2s; }
         .btn-hover:hover { transform: translateY(-2px); }
         .fade-in { animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .progress-fill { transition: width 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 🎯 Цвета бейджей сложности */
+        .diff-emerald { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .diff-amber   { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .diff-rose    { background: rgba(244, 63, 94, 0.15);  color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.3); }
+        .badge-enter  { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="bg-gray-950 text-white min-h-screen flex items-center justify-center p-4">

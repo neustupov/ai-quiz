@@ -8,7 +8,8 @@
       "База данных с готовыми ответами",
       "Язык программирования для ИИ"
     ],
-    "correctIndex": 0
+    "correctIndex": 0,
+    "difficulty": "easy"
   },
   {
     "id": 2,
@@ -19,7 +20,8 @@
       "Обучение на размеченных данных и самообучение",
       "Ручное программирование правил"
     ],
-    "correctIndex": 1
+    "correctIndex": 1,
+    "difficulty": "medium"
   },
   {
     "id": 3,
@@ -30,7 +32,8 @@
       "Generative Pre-trained Transformer",
       "Global Prompt Translator"
     ],
-    "correctIndex": 1
+    "correctIndex": 1,
+    "difficulty": "easy"
   },
   {
     "id": 4,
@@ -41,7 +44,8 @@
       "Визуальные артефакты на сгенерированных изображениях",
       "Состояние перегрева сервера с нейросетью"
     ],
-    "correctIndex": 0
+    "correctIndex": 0,
+    "difficulty": "medium"
   },
   {
     "id": 5,
@@ -52,7 +56,8 @@
       "OpenAI",
       "Meta"
     ],
-    "correctIndex": 1
+    "correctIndex": 1,
+    "difficulty": "easy"
   },
   {
     "id": 6,
@@ -63,7 +68,8 @@
       "Генерирует фотореалистичные портреты",
       "Переводит текст в речь"
     ],
-    "correctIndex": 0
+    "correctIndex": 0,
+    "difficulty": "hard"
   },
   {
     "id": 7,
@@ -74,7 +80,8 @@
       "Модель запоминает правильные ответы из учебника",
       "Нейросеть копирует структуру человеческого мозга 1 в 1"
     ],
-    "correctIndex": 0
+    "correctIndex": 0,
+    "difficulty": "medium"
   },
   {
     "id": 8,
@@ -85,7 +92,8 @@
       "Лицензионный ключ для доступа к API",
       "Физический чип для ускорения вычислений"
     ],
-    "correctIndex": 0
+    "correctIndex": 0,
+    "difficulty": "easy"
   },
   {
     "id": 9,
@@ -96,7 +104,8 @@
       "FPS (кадры в секунду)",
       "Размер модели в гигабайтах"
     ],
-    "correctIndex": 0
+    "correctIndex": 0,
+    "difficulty": "hard"
   },
   {
     "id": 10,
@@ -107,7 +116,8 @@
       "Уменьшение размера модели для запуска на телефоне",
       "Замена всех весов нейросети случайными значениями"
     ],
-    "correctIndex": 0
+    "correctIndex": 0,
+    "difficulty": "medium"
   },
   {
     "id": 11,
@@ -118,7 +128,8 @@
       "Deep Blue",
       "Watson"
     ],
-    "correctIndex": 0
+    "correctIndex": 0,
+    "difficulty": "easy"
   },
   {
     "id": 12,
@@ -129,7 +140,8 @@
       "Процесс сборки серверов для обучения моделей",
       "Написание кода на Python для нейросетей"
     ],
-    "correctIndex": 0
+    "correctIndex": 0,
+    "difficulty": "medium"
   },
   {
     "id": 13,
@@ -140,6 +152,7 @@
       "Рекуррентные нейросети (RNN)",
       "Деревья решений"
     ],
-    "correctIndex": 0
+    "correctIndex": 0,
+    "difficulty": "hard"
   }
 ]
