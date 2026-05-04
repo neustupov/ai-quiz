@@ -21,6 +21,26 @@
         .diff-rose    { background: rgba(244, 63, 94, 0.15);  color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.3); }
         .badge-enter  { animation: slideIn 0.3s ease-out; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Оптимизация изображений */
+        #q-image {
+            max-height: 250px;
+            object-fit: contain;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+        }
+
+        /* Skeleton loader для изображений */
+        .image-loading {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
     </style>
 </head>
 <body class="bg-gray-950 text-white min-h-screen flex items-center justify-center p-4">
@@ -34,7 +54,7 @@
 <section id="screen-start" class="w-full max-w-md fade-in">
     <div class="glass rounded-2xl p-8 shadow-2xl text-center">
         <div class="text-4xl mb-2">🤖</div>
-        <h1 class="text-3xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">AI Quiz by ZaharZ</h1>
+        <h1 class="text-3xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">AI Quiz by Zahar</h1>
         <p class="text-gray-400 mb-6">Проверь, насколько хорошо ты разбираешься в искусственном интеллекте</p>
         <input id="name-input" type="text" placeholder="Введи своё имя" maxlength="20"
                class="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-700 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 text-white placeholder-gray-500 mb-4">

@@ -79,11 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderQuestion() {
         const q = state.quizQuestions[state.currentIndex];
-        if (!q) {
-            console.warn('⚠️ Вопросы закончились раньше времени.');
-            finishQuiz();
-            return;
-        }
+        if (!q) { finishQuiz(); return; }
 
         state.answered = false;
         const total = state.quizQuestions.length;
@@ -91,8 +87,27 @@ document.addEventListener('DOMContentLoaded', () => {
         progressBar.style.width = `${((state.currentIndex + 1) / total) * 100}%`;
         scoreText.textContent = `Очки: ${state.score}`;
 
-        qImage.src = q.image || '';
-        qImage.classList.toggle('hidden', !q.image);
+        // 🖼️ Улучшенная загрузка изображения
+        if (q.image) {
+            qImage.src = q.image;
+            qImage.classList.remove('hidden');
+            qImage.classList.add('fade-in');
+
+            // Обработка ошибки загрузки
+            qImage.onerror = () => {
+                console.warn(`⚠️ Не удалось загрузить: ${q.image}`);
+                qImage.classList.add('hidden');
+            };
+
+            // Удаление класса анимации после завершения
+            qImage.onload = () => {
+                qImage.classList.remove('fade-in');
+            };
+        } else {
+            qImage.src = '';
+            qImage.classList.add('hidden');
+        }
+
         qText.textContent = q.question;
 
         // 🏷️ Бейдж сложности
