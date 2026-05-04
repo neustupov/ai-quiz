@@ -256,11 +256,17 @@ document.addEventListener('DOMContentLoaded', () => {
         state.score = 0;
         showScreen('quiz');
         renderQuestion();
+
+        // 🔥 Возвращаем кнопке активное состояние
+        startBtn.disabled = false;
         startBtn.textContent = 'Начать квиз';
     };
 
     restartBtn.onclick = () => {
         showScreen('start');
         nameInput.value = '';
+        // 🔥 Принудительно разблокируем кнопку при возврате на старт
+        startBtn.disabled = false;
+        startBtn.textContent = 'Начать квиз';
     };
 });
