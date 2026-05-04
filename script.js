@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyzeYgYKJrhcyUI71MCcifTM1UDxi8JRgIDu1u1xBAaiViJ3ntnzmpHFIlH8wQpYbukvA/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywFZAlQzqrvjKHbhRVVGsYbHjG223rheB4dkOruu6l8SW2DUHgOhzCDdDJNGYSc3PTCg/exec';
 
     const DIFFICULTY = {
         easy:   { label: 'Лёгкий',   color: 'emerald', points: 1 },
