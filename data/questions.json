@@ -9,7 +9,7 @@
   { "id": 8, "question": "Что такое 'токен' в языковых моделях?", "image": "assets/images/8.jpg", "options": ["Часть текста (слово/слог)", "Лицензионный ключ", "Физический чип"], "correctIndex": 0, "difficulty": "easy" },
   { "id": 9, "question": "Какая метрика чаще всего используется для оценки классификации ИИ?", "image": "assets/images/9.jpg", "options": ["Accuracy, Precision, Recall", "FPS", "Размер модели в ГБ"], "correctIndex": 0, "difficulty": "hard" },
   { "id": 10, "question": "Что означает термин 'fine-tuning'?", "image": "assets/images/10.jpg", "options": ["Дообучение готовой модели на узких данных", "Уменьшение размера модели", "Замена весов случайными"], "correctIndex": 0, "difficulty": "medium" },
-  { "id": 11, "question": "Какой ИИ впервые обыграл чемпиона мира по го?", "image": "assets/images/11.jpg", "options": ["AlphaGo", "Deep Blue", "Watson"], "correctIndex": 0, "difficulty": "easy" },
+  { "id": 11, "question": "Какой ИИ впервые обыграл чемпиона мира по ГО?", "image": "assets/images/11.jpg", "options": ["AlphaGo", "Deep Blue", "Watson"], "correctIndex": 0, "difficulty": "easy" },
   { "id": 12, "question": "Что такое 'prompt engineering'?", "image": "assets/images/12.jpg", "options": ["Составление запросов для лучших результатов", "Сборка серверов", "Написание кода на Python"], "correctIndex": 0, "difficulty": "medium" },
   { "id": 13, "question": "Какая технология лежит в основе Stable Diffusion?", "image": "assets/images/13.jpg", "options": ["Диффузионные модели", "Рекуррентные сети (RNN)", "Деревья решений"], "correctIndex": 0, "difficulty": "hard" }
 ]
