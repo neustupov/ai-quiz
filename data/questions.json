@@ -1,5 +1,5 @@
 [
-  { "id": 1, "question": "Что такое Large Language Model (LLM)?", "image": "assets/images/1.jpg", "options": ["Нейросеть, обученная на огромных текстах", "База данных с готовыми ответами", "Язык программирования для ИИ"], "correctIndex": 0, "difficulty": "easy" },
+  { "id": 1, "question": "Что такое Large Language Model (LLM)?", "image": "assets/images/1.mp4", "options": ["Нейросеть, обученная на огромных текстах", "База данных с готовыми ответами", "Язык программирования для ИИ"], "correctIndex": 0, "difficulty": "easy" },
   { "id": 2, "question": "Какой метод чаще всего используется для обучения современных ИИ-моделей?", "image": "assets/images/2.jpg", "options": ["Генетические алгоритмы", "Обучение на данных и самообучение", "Ручное программирование правил"], "correctIndex": 1, "difficulty": "medium" },
   { "id": 3, "question": "Что означает аббревиатура GPT?", "image": "assets/images/3.jpg", "options": ["General Processing Technology", "Generative Pre-trained Transformer", "Global Prompt Translator"], "correctIndex": 1, "difficulty": "easy" },
   { "id": 4, "question": "Что такое 'галлюцинация' в контексте работы ИИ?", "image": "assets/images/4.jpg", "options": ["Правдоподобный, но неверный ответ модели", "Визуальные артефакты на изображениях", "Перегрев сервера"], "correctIndex": 0, "difficulty": "medium" },
